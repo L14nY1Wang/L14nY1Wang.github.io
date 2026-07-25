@@ -39,6 +39,7 @@
     .ap-input:focus { outline:2px solid color-mix(in srgb,var(--color) 60%,transparent); border-color:var(--color); }
     .first-btn { margin-left:auto; border:0; background:transparent; padding:8px 0; color:var(--muted); cursor:pointer; font-size:12px; }
     .first-btn.on { color:var(--active); font-weight:800; }
+    .first-btn:disabled { cursor:default; opacity:.58; }
     .ap-display { display:flex; align-items:flex-end; justify-content:center; gap:8px; }
     .ap-label { color:var(--muted); font-size:11px; margin-bottom:5px; }
     .ap-number { font-size:64px; font-weight:900; line-height:.8; font-variant-numeric:tabular-nums; }
@@ -57,18 +58,26 @@
     .timeline-top { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin-bottom:8px; color:var(--muted); font-size:11px; }
     .timeline-top span:nth-child(2) { color:var(--ink); font-weight:750; }
     .timeline-top span:last-child { text-align:right; }
-    .turn-label { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:750; }
-    .turn-label.p2 { justify-content:flex-end; }
-    .turn-dot { width:8px; height:8px; border-radius:50%; background:var(--line); }
-    .turn-label.active .turn-dot { background:var(--active); box-shadow:0 0 0 4px rgba(233,196,106,.12); }
-    .timeline { display:grid; grid-template-rows:1fr 1fr; gap:6px; height:94px; position:relative; }
-    .track { position:relative; min-width:0; }
-    .track-grid { position:absolute; inset:0; display:grid; grid-template-columns:repeat(var(--segments),minmax(0,1fr)); gap:3px; }
-    .cell { min-width:0; background:#22241f; border-left:1px solid #4b4e46; border-right:1px solid #171815; display:grid; place-items:center; color:#10110f; font-style:normal; font-size:12px; font-weight:900; transition:background .2s ease; }
-    .track.p1 .cell { border-top:2px solid rgba(228,87,46,.55); }
-    .track.p2 .cell { border-bottom:2px solid rgba(32,164,167,.6); }
-    .track.p1 .cell.marker-cell { background:var(--p1); border-color:var(--p1); }
-    .track.p2 .cell.marker-cell { background:var(--p2); border-color:var(--p2); }
+    .timeline { height:132px; position:relative; }
+    .timeline:before { content:""; position:absolute; top:50%; left:15px; right:15px; border-top:2px solid #64685e; }
+    .track { position:absolute; inset:0; min-width:0; }
+    .track-grid { position:absolute; inset:0 15px; display:flex; align-items:stretch; justify-content:space-between; }
+    .track.p1 { --track-color:var(--p1); }
+    .track.p2 { --track-color:var(--p2); }
+    .tick { position:relative; flex:0 0 0; min-width:0; color:var(--muted); font-style:normal; font-size:10px; font-variant-numeric:tabular-nums; }
+    .tick:before { content:""; position:absolute; left:-1px; height:11px; border-left:2px solid var(--track-color); }
+    .track.p1 .tick:before { bottom:50%; }
+    .track.p2 .tick:before { top:50%; }
+    .tick-value { position:absolute; left:50%; transform:translateX(-50%); line-height:1; }
+    .track.p1 .tick-value { bottom:calc(50% + 15px); }
+    .track.p2 .tick-value { top:calc(50% + 15px); }
+    .axis-marker { position:absolute; left:50%; transform:translateX(-50%); width:34px; height:25px; display:grid; place-items:center; border-radius:999px; background:var(--track-color); color:#10110f; font-size:12px; font-weight:900; line-height:1; z-index:3; box-shadow:0 3px 8px rgba(0,0,0,.28); }
+    .axis-marker:after { content:""; position:absolute; left:50%; transform:translateX(-50%); width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; }
+    .track.p1 .axis-marker { bottom:calc(50% + 32px); }
+    .track.p1 .axis-marker:after { bottom:-5px; border-top:6px solid var(--track-color); }
+    .track.p2 .axis-marker { top:calc(50% + 32px); }
+    .track.p2 .axis-marker:after { top:-5px; border-bottom:6px solid var(--track-color); }
+    .axis-marker.current { outline:2px solid var(--active); box-shadow:0 0 0 4px rgba(233,196,106,.14),0 0 14px rgba(233,196,106,.5); }
     .center-actions { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px; }
     .status { color:var(--muted); font-size:11px; min-width:210px; text-align:right; }
     .next { height:42px; min-width:140px; border:0; border-radius:5px; background:var(--ink); color:#151613; font-weight:850; cursor:pointer; }
@@ -91,8 +100,8 @@
       .spend { height:44px; }
       .adjust { grid-template-columns:34px 34px; }
       .timeline-wrap { padding:8px 0; }
-      .timeline { gap:4px; height:76px; }
-      .track-grid { gap:2px; }
+      .timeline { height:124px; }
+      .tick { font-size:9px; }
       .center-actions { display:grid; grid-template-columns:1fr 128px; gap:8px; }
       .status { min-width:0; text-align:left; }
       .next { min-width:0; }
@@ -121,10 +130,8 @@
       <div class="player-side p1-side" id="player-1"></div>
 
       <section class="timeline-wrap" aria-label="共享时间轴">
-        <div class="timeline-top"><span>起点</span><span id="timeline-title">共享时间轴</span><span>终点</span></div>
-        <div class="turn-label" id="turn-p1"><i class="turn-dot"></i><span>P1</span></div>
+        <div class="timeline-top"><span>满值</span><span id="timeline-title">剩余行动点数轴</span><span>耗尽</span></div>
         <div class="timeline" id="timeline"></div>
-        <div class="turn-label p2" id="turn-p2"><span>P2</span><i class="turn-dot"></i></div>
         <div class="center-actions">
           <div class="status" id="status"></div>
           <button class="next" id="next-round">结束本回合</button>
@@ -157,9 +164,18 @@
     function save() { localStorage.setItem('ap-referee-v2', JSON.stringify(state)); }
     function snapshot() { history.push(JSON.stringify(state)); if (history.length > 30) history.shift(); }
     function stepFor(p) { return 24 / p.maxAp; }
+    function firstPlayer() {
+      const [a,b]=state.players;
+      if (a.ap!==b.ap) return a.ap>b.ap?1:2;
+      if (a.maxAp!==b.maxAp) return a.maxAp>b.maxAp?1:2;
+      return state.first;
+    }
+    function hasAutomaticFirst() {
+      const [a,b]=state.players; return a.ap!==b.ap || a.maxAp!==b.maxAp;
+    }
     function actingPlayer() {
       const [a,b] = state.players;
-      if (Math.abs(a.position-b.position) < .0001) return state.first;
+      if (Math.abs(a.position-b.position) < .0001) return firstPlayer();
       return a.position < b.position ? 1 : 2;
     }
     function spend(index, amount) {
@@ -190,23 +206,27 @@
     }
     function renderTimeline() {
       const root=document.querySelector('#timeline'); root.innerHTML='';
+      const actor=actingPlayer();
       state.players.forEach((p,i)=>{
         const track=document.createElement('div'); track.className=`track p${i+1}`;
-        const grid=document.createElement('div'); grid.className='track-grid'; grid.style.setProperty('--segments',p.maxAp);
-        const used=Math.round((p.position/24)*p.maxAp); const markerIndex=Math.max(0,Math.min(p.maxAp-1,used-1));
-        for (let n=0;n<p.maxAp;n++) {
-          const cell=document.createElement('i'); cell.className=`cell${n===markerIndex?' marker-cell':''}`;
-          if (n===markerIndex) cell.textContent=`P${i+1}`; grid.append(cell);
+        const grid=document.createElement('div'); grid.className='track-grid';
+        const used=Math.round((p.position/24)*p.maxAp);
+        for (let n=0;n<=p.maxAp;n++) {
+          const tick=document.createElement('i'); tick.className='tick';
+          const value=document.createElement('span'); value.className='tick-value'; value.textContent=p.maxAp-n; tick.append(value);
+          if (n===used) { const marker=document.createElement('sup'); marker.className=`axis-marker${actor===i+1?' current':''}`; marker.textContent=`P${i+1}`; tick.append(marker); }
+          grid.append(tick);
         }
         track.append(grid); root.append(track);
       });
-      document.querySelector('#timeline-title').textContent=`P1 · ${state.players[0].maxAp} 格 / P2 · ${state.players[1].maxAp} 格`;
+      document.querySelector('#timeline-title').textContent=`P1 ${state.players[0].maxAp}→0 / P2 ${state.players[1].maxAp}→0`;
     }
-    function playerHTML(p,i,actor) {
+    function playerHTML(p,i,actor,first,automaticFirst) {
       const pips=Array.from({length:p.maxAp},(_,n)=>`<i class="ap-pip ${n<p.ap?'used':''}"></i>`).join('');
+      const firstLabel=first===i+1?(automaticFirst?'◆ 自动先手':'◆ 当前先手'):(automaticFirst?'自动判定':'平局时设先手');
       return `<article class="player p${i+1} ${actor===i+1?'active-turn':''}">
         <div class="player-head"><span class="player-id">P${i+1}</span><div class="player-name"><strong>玩家${i===0?'一':'二'}</strong><span>每点推进 ${Number(stepFor(p).toFixed(2))} 格</span></div>
-          <div class="ap-setting"><label for="ap-${i}">行动点上限</label><input class="ap-input" id="ap-${i}" data-max="${i}" type="number" inputmode="numeric" min="1" max="24" value="${p.maxAp}"><button class="first-btn ${state.first===i+1?'on':''}" data-first="${i}">${state.first===i+1?'◆ 当前先手':'设为先手'}</button></div>
+          <div class="ap-setting"><label for="ap-${i}">行动点上限</label><input class="ap-input" id="ap-${i}" data-max="${i}" type="number" inputmode="numeric" min="1" max="24" value="${p.maxAp}"><button class="first-btn ${first===i+1?'on':''}" data-first="${i}" ${automaticFirst?'disabled':''}>${firstLabel}</button></div>
         </div>
         <div><div class="ap-display"><div><div class="ap-label">剩余行动点</div><strong class="ap-number">${p.ap}</strong></div><span class="ap-max">/ ${p.maxAp}</span></div><div class="ap-track">${pips}</div></div>
         <div class="controls">${[1,2,3].map(n=>`<button class="spend" data-spend="${i},${n}" ${p.ap<n?'disabled':''}>− ${n}</button>`).join('')}<div class="adjust"><button data-adjust="${i},-1" aria-label="扣除一点">−</button><button data-adjust="${i},1" aria-label="恢复一点">＋</button></div></div>
@@ -222,10 +242,9 @@
       });
     }
     function render() {
-      const actor=actingPlayer(); document.querySelector('#round').textContent=String(state.round).padStart(2,'0');
-      document.querySelector('#turn-p1').classList.toggle('active',actor===1); document.querySelector('#turn-p2').classList.toggle('active',actor===2);
-      document.querySelector('#status').textContent=`P${actor} 行动 · P${state.first} 先手`;
-      document.querySelector('#player-1').innerHTML=playerHTML(state.players[0],0,actor); document.querySelector('#player-2').innerHTML=playerHTML(state.players[1],1,actor);
+      const actor=actingPlayer(), first=firstPlayer(), automaticFirst=hasAutomaticFirst(); document.querySelector('#round').textContent=String(state.round).padStart(2,'0');
+      document.querySelector('#status').textContent=`P${actor} 行动 · P${first} ${automaticFirst?'自动先手':'平局先手'}`;
+      document.querySelector('#player-1').innerHTML=playerHTML(state.players[0],0,actor,first,automaticFirst); document.querySelector('#player-2').innerHTML=playerHTML(state.players[1],1,actor,first,automaticFirst);
       document.querySelector('#undo').disabled=!history.length; document.querySelector('#next-round').textContent=state.round===5?'结束对局':'结束本回合';
       renderTimeline(); bind();
     }
