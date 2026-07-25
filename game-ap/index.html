@@ -6,240 +6,227 @@
   <meta name="theme-color" content="#111210">
   <title>30 秒内打翻你 · 行动点裁判器</title>
   <style>
-    :root { color-scheme: dark; --ink:#f1efe8; --muted:#a8aaa3; --line:#353832; --panel:#1b1d1a; --p1:#e4572e; --p2:#20a4a7; --active:#e9c46a; }
+    :root { color-scheme:dark; --ink:#f1efe8; --muted:#9da097; --line:#353832; --panel:#1b1d1a; --p1:#e4572e; --p2:#20a4a7; --active:#e9c46a; }
     * { box-sizing:border-box; }
     body { margin:0; min-height:100vh; background:#111210; color:var(--ink); font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif; letter-spacing:0; }
-    button,select { font:inherit; color:inherit; }
+    button,input { font:inherit; color:inherit; }
     button { touch-action:manipulation; }
-    .app { width:min(1180px,100%); margin:auto; padding:20px 22px 32px; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--line); padding-bottom:16px; }
-    .brand { display:flex; align-items:baseline; gap:12px; }
-    h1 { font-size:20px; margin:0; font-weight:800; }
-    .brand span { color:var(--muted); font-size:12px; }
-    .icon-btn { width:42px; height:42px; display:grid; place-items:center; border:1px solid var(--line); background:transparent; border-radius:6px; cursor:pointer; }
-    .icon-btn:disabled { opacity:.32; cursor:not-allowed; }
-    .icon-btn svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-    .top-actions { display:flex; gap:8px; }
-    .match-bar { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin:18px 0; min-height:72px; }
-    .turn-side { display:flex; align-items:center; gap:10px; font-weight:750; font-size:14px; }
-    .turn-side.right { justify-content:flex-end; }
-    .turn-dot { width:10px; height:10px; border-radius:50%; background:var(--line); }
-    .turn-side.active .turn-dot { background:var(--active); box-shadow:0 0 0 5px rgba(233,196,106,.12); }
-    .round { text-align:center; }
-    .round strong { display:block; font-size:30px; line-height:1; font-variant-numeric:tabular-nums; }
-    .round span { display:block; color:var(--muted); font-size:11px; margin-top:7px; }
-    .timeline-wrap { border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:20px 0 18px; overflow:hidden; }
-    .timeline-meta { display:flex; justify-content:space-between; color:var(--muted); font-size:11px; margin-bottom:9px; }
-    .timeline { display:grid; grid-template-columns:repeat(24,minmax(13px,1fr)); gap:3px; height:100px; position:relative; }
-    .cell { background:#22241f; border-top:2px solid #41443c; position:relative; }
-    .cell.major { border-top-color:#767a6e; }
-    .marker { position:absolute; left:50%; transform:translateX(-50%); width:clamp(20px,3vw,32px); height:32px; border-radius:4px; display:grid; place-items:center; font-weight:900; font-size:13px; z-index:2; transition:left .2s ease; }
-    .marker.p1 { top:11px; background:var(--p1); color:#18100e; }
-    .marker.p2 { bottom:10px; background:var(--p2); color:#071516; }
-    .marker.start { transform:translateX(0); }
-    .marker.end { transform:translateX(-100%); }
-    .marker.same.p1 { transform:translateX(-88%); }
-    .marker.same.p2 { transform:translateX(-12%); }
-    .marker.same.start.p1 { transform:translateX(0); }
-    .marker.same.start.p2 { transform:translateX(100%); }
-    .marker.same.end.p1 { transform:translateX(-200%); }
-    .marker.same.end.p2 { transform:translateX(-100%); }
-    .players { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; }
-    .player { background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--color); border-radius:7px; padding:18px; }
-    .player-head { display:flex; align-items:center; gap:12px; }
-    .player-id { width:34px; height:34px; flex:none; display:grid; place-items:center; background:var(--color); color:#10110f; font-weight:900; border-radius:4px; }
-    .player-title { flex:1; min-width:0; }
-    .player-title strong { display:block; font-size:16px; }
-    .player-title span { display:block; font-size:11px; color:var(--muted); margin-top:3px; }
-    select { max-width:132px; min-width:0; background:#111210; border:1px solid var(--line); border-radius:5px; padding:8px 28px 8px 10px; }
-    .ap-display { display:flex; align-items:flex-end; justify-content:space-between; padding:22px 0 18px; }
-    .ap-label { color:var(--muted); font-size:12px; }
-    .ap-number { font-size:clamp(54px,8vw,82px); font-weight:900; line-height:.86; font-variant-numeric:tabular-nums; }
-    .ap-max { color:var(--muted); font-size:18px; padding-bottom:5px; }
-    .ap-track { height:8px; display:flex; gap:3px; margin-bottom:18px; }
-    .ap-pip { flex:1; background:#30332d; }
+    .app { width:min(960px,100%); min-height:100vh; margin:auto; padding:14px 20px 20px; display:flex; flex-direction:column; }
+    header { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:48px; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size:17px; }
+    .round { text-align:center; font-size:12px; color:var(--muted); }
+    .round strong { color:var(--ink); font-size:20px; margin-right:4px; font-variant-numeric:tabular-nums; }
+    .top-actions { display:flex; justify-content:flex-end; gap:7px; }
+    .icon-btn { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line); background:transparent; border-radius:5px; cursor:pointer; }
+    .icon-btn:disabled { opacity:.3; }
+    .icon-btn svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .table { flex:1; min-height:0; display:grid; grid-template-rows:minmax(210px,1fr) auto minmax(210px,1fr); gap:14px; padding-top:14px; }
+    .player-side { min-height:0; display:flex; align-items:center; justify-content:center; }
+    .player-side.p1-side { transform:rotate(180deg); }
+    .player { --color:var(--p1); position:relative; isolation:isolate; width:100%; background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--color); border-radius:6px; padding:14px 16px; display:grid; grid-template-columns:minmax(150px,.85fr) minmax(170px,1fr) minmax(230px,1.4fr); gap:18px; align-items:center; }
+    .player.p2 { --color:var(--p2); }
+    .player.active-turn { border-color:rgba(233,196,106,.62); box-shadow:0 0 16px rgba(233,196,106,.12); }
+    .player.active-turn:before { content:""; position:absolute; z-index:-1; inset:-3px; border-radius:8px; padding:2px; background:conic-gradient(from var(--glow-angle),transparent 0 55%,rgba(233,196,106,.18) 66%,#fff0a8 76%,rgba(233,196,106,.18) 86%,transparent 100%); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; animation:turn-glow 2.7s linear infinite; }
+    @property --glow-angle { syntax:"<angle>"; initial-value:0deg; inherits:false; }
+    @keyframes turn-glow { to { --glow-angle:360deg; } }
+    .player-head { display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:center; }
+    .player-id { width:34px; height:34px; display:grid; place-items:center; border-radius:4px; background:var(--color); color:#10110f; font-weight:900; }
+    .player-name strong { display:block; font-size:16px; }
+    .player-name span { display:block; color:var(--muted); font-size:11px; margin-top:3px; }
+    .ap-setting { grid-column:1 / -1; display:flex; align-items:center; gap:8px; margin-top:2px; }
+    .ap-setting label { color:var(--muted); font-size:12px; }
+    .ap-input { width:68px; height:38px; background:#10110f; border:1px solid var(--line); border-radius:4px; padding:0 8px; text-align:center; font-weight:800; font-size:17px; font-variant-numeric:tabular-nums; }
+    .ap-input:focus { outline:2px solid color-mix(in srgb,var(--color) 60%,transparent); border-color:var(--color); }
+    .first-btn { margin-left:auto; border:0; background:transparent; padding:8px 0; color:var(--muted); cursor:pointer; font-size:12px; }
+    .first-btn.on { color:var(--active); font-weight:800; }
+    .ap-display { display:flex; align-items:flex-end; justify-content:center; gap:8px; }
+    .ap-label { color:var(--muted); font-size:11px; margin-bottom:5px; }
+    .ap-number { font-size:64px; font-weight:900; line-height:.8; font-variant-numeric:tabular-nums; }
+    .ap-max { color:var(--muted); font-size:16px; padding-bottom:3px; }
+    .ap-track { height:7px; display:flex; gap:3px; margin-top:15px; }
+    .ap-pip { flex:1; min-width:2px; background:#30332d; }
     .ap-pip.used { background:var(--color); }
-    .spend { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .spend button { height:52px; border:1px solid var(--line); background:#292b27; border-radius:5px; font-weight:800; font-size:17px; cursor:pointer; }
-    .spend button:hover:not(:disabled) { border-color:var(--color); }
-    .spend button:active:not(:disabled) { transform:translateY(1px); }
-    .spend button:disabled { opacity:.28; cursor:not-allowed; }
-    .player-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; }
-    .first-btn { border:0; background:transparent; padding:7px 0; color:var(--muted); cursor:pointer; font-size:12px; }
-    .first-btn.on { color:var(--active); font-weight:750; }
-    .adjust { display:flex; align-items:center; gap:6px; }
-    .adjust button { width:34px; height:34px; border:1px solid var(--line); background:transparent; border-radius:4px; font-size:20px; cursor:pointer; }
-    .footer-actions { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin-top:18px; }
-    .status { color:var(--muted); font-size:12px; }
-    .next { border:0; background:var(--ink); color:#151613; border-radius:5px; min-width:150px; height:48px; font-weight:850; cursor:pointer; }
-    .rule { text-align:right; color:var(--muted); font-size:11px; }
-    .toast { position:fixed; left:50%; bottom:20px; transform:translate(-50%,20px); padding:10px 14px; background:#f1efe8; color:#151613; border-radius:5px; font-size:12px; opacity:0; pointer-events:none; transition:.2s; }
+    .controls { display:grid; grid-template-columns:repeat(3,1fr) auto; gap:8px; }
+    .spend { height:52px; border:1px solid var(--line); background:#292b27; border-radius:5px; font-weight:850; font-size:17px; cursor:pointer; }
+    .spend:hover:not(:disabled) { border-color:var(--color); }
+    .spend:active:not(:disabled),.adjust button:active { transform:translateY(1px); }
+    .spend:disabled { opacity:.28; cursor:not-allowed; }
+    .adjust { display:grid; grid-template-columns:38px 38px; gap:5px; }
+    .adjust button { border:1px solid var(--line); background:transparent; border-radius:4px; font-size:20px; cursor:pointer; }
+    .timeline-wrap { position:relative; padding:12px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden; }
+    .timeline-top { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin-bottom:8px; color:var(--muted); font-size:11px; }
+    .timeline-top span:nth-child(2) { color:var(--ink); font-weight:750; }
+    .timeline-top span:last-child { text-align:right; }
+    .turn-label { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:750; }
+    .turn-label.p2 { justify-content:flex-end; }
+    .turn-dot { width:8px; height:8px; border-radius:50%; background:var(--line); }
+    .turn-label.active .turn-dot { background:var(--active); box-shadow:0 0 0 4px rgba(233,196,106,.12); }
+    .timeline { display:grid; grid-template-rows:1fr 1fr; gap:6px; height:94px; position:relative; }
+    .track { position:relative; min-width:0; }
+    .track-grid { position:absolute; inset:0; display:grid; grid-template-columns:repeat(var(--segments),minmax(0,1fr)); gap:3px; }
+    .cell { min-width:0; background:#22241f; border-left:1px solid #4b4e46; border-right:1px solid #171815; display:grid; place-items:center; color:#10110f; font-style:normal; font-size:12px; font-weight:900; transition:background .2s ease; }
+    .track.p1 .cell { border-top:2px solid rgba(228,87,46,.55); }
+    .track.p2 .cell { border-bottom:2px solid rgba(32,164,167,.6); }
+    .track.p1 .cell.marker-cell { background:var(--p1); border-color:var(--p1); }
+    .track.p2 .cell.marker-cell { background:var(--p2); border-color:var(--p2); }
+    .center-actions { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px; }
+    .status { color:var(--muted); font-size:11px; min-width:210px; text-align:right; }
+    .next { height:42px; min-width:140px; border:0; border-radius:5px; background:var(--ink); color:#151613; font-weight:850; cursor:pointer; }
+    .rule { min-width:210px; color:var(--muted); font-size:11px; }
+    .toast { position:fixed; left:50%; bottom:18px; transform:translate(-50%,20px); padding:10px 14px; background:var(--ink); color:#151613; border-radius:5px; font-size:12px; opacity:0; pointer-events:none; transition:.2s; z-index:10; }
     .toast.show { opacity:1; transform:translate(-50%,0); }
     @media (max-width:700px) {
-      .app { padding:14px 12px 24px; }
-      header { padding-bottom:12px; }
-      .brand span { display:none; }
-      .match-bar { margin:10px 0; min-height:62px; }
-      .turn-side { font-size:12px; }
-      .round strong { font-size:25px; }
-      .timeline-wrap { padding:14px 0 12px; }
-      .timeline { gap:2px; height:86px; }
-      .players { gap:8px; margin-top:12px; }
-      .player { padding:12px 9px; }
-      .player-head { align-items:flex-start; gap:7px; flex-wrap:wrap; }
-      .player-id { width:28px; height:28px; }
-      .player-title { min-width:80px; }
-      select { width:100%; max-width:none; flex-basis:100%; }
-      .ap-display { padding:16px 0 13px; }
-      .ap-number { font-size:50px; }
-      .ap-max { font-size:14px; }
-      .spend { grid-template-columns:1fr; gap:6px; }
-      .spend button { height:44px; }
-      .player-foot { align-items:flex-end; }
-      .first-btn { text-align:left; }
-      .footer-actions { grid-template-columns:1fr 1fr; gap:10px; }
-      .next { min-width:0; width:100%; grid-column:2; }
+      .app { padding:8px 10px 12px; }
+      header { min-height:42px; }
+      h1 { font-size:14px; }
+      .icon-btn { width:34px; height:34px; }
+      .table { grid-template-rows:minmax(230px,1fr) auto minmax(230px,1fr); gap:8px; padding-top:8px; }
+      .player { padding:10px; grid-template-columns:1fr auto; grid-template-rows:auto auto auto; gap:9px 12px; }
+      .player-head { grid-column:1; }
+      .ap-setting { grid-column:1 / -1; }
+      .ap-display { grid-column:2; grid-row:1; }
+      .ap-number { font-size:48px; }
+      .ap-track { grid-column:1 / -1; margin-top:0; }
+      .controls { grid-column:1 / -1; grid-template-columns:repeat(3,1fr) 74px; }
+      .spend { height:44px; }
+      .adjust { grid-template-columns:34px 34px; }
+      .timeline-wrap { padding:8px 0; }
+      .timeline { gap:4px; height:76px; }
+      .track-grid { gap:2px; }
+      .center-actions { display:grid; grid-template-columns:1fr 128px; gap:8px; }
+      .status { min-width:0; text-align:left; }
+      .next { min-width:0; }
       .rule { display:none; }
-      .status { font-size:11px; }
     }
+    @media (max-height:720px) and (orientation:landscape) {
+      .app { min-height:auto; }
+      .table { grid-template-rows:auto auto auto; }
+      .player { padding:9px 12px; }
+    }
+    @media (prefers-reduced-motion:reduce) { .player.active-turn:before { animation:none; --glow-angle:70deg; } }
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <div class="brand"><h1>30 秒内打翻你</h1><span>行动点裁判器</span></div>
+      <h1>30 秒内打翻你</h1>
+      <div class="round"><strong id="round">01</strong>回合 / 05</div>
       <div class="top-actions">
-        <button class="icon-btn" id="undo" aria-label="撤销" title="撤销">
-          <svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 1 1 0 14h-3"/></svg>
-        </button>
-        <button class="icon-btn" id="reset" aria-label="重置对局" title="重置对局">
-          <svg viewBox="0 0 24 24"><path d="M20 6v6h-6"/><path d="M20 12a8 8 0 1 0-2.34 5.66L20 16"/></svg>
-        </button>
+        <button class="icon-btn" id="undo" aria-label="撤销" title="撤销"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 1 1 0 14h-3"/></svg></button>
+        <button class="icon-btn" id="reset" aria-label="重置对局" title="重置对局"><svg viewBox="0 0 24 24"><path d="M20 6v6h-6"/><path d="M20 12a8 8 0 1 0-2.34 5.66L20 16"/></svg></button>
       </div>
     </header>
 
-    <section class="match-bar" aria-live="polite">
-      <div class="turn-side" id="turn-p1"><i class="turn-dot"></i><span>玩家一</span></div>
-      <div class="round"><strong id="round">01</strong><span>回合 / 05</span></div>
-      <div class="turn-side right" id="turn-p2"><span>玩家二</span><i class="turn-dot"></i></div>
+    <section class="table">
+      <div class="player-side p1-side" id="player-1"></div>
+
+      <section class="timeline-wrap" aria-label="共享时间轴">
+        <div class="timeline-top"><span>起点</span><span id="timeline-title">共享时间轴</span><span>终点</span></div>
+        <div class="turn-label" id="turn-p1"><i class="turn-dot"></i><span>P1</span></div>
+        <div class="timeline" id="timeline"></div>
+        <div class="turn-label p2" id="turn-p2"><span>P2</span><i class="turn-dot"></i></div>
+        <div class="center-actions">
+          <div class="status" id="status"></div>
+          <button class="next" id="next-round">结束本回合</button>
+          <div class="rule">落后者行动 · 重合时先手行动</div>
+        </div>
+      </section>
+
+      <div class="player-side" id="player-2"></div>
     </section>
-
-    <section class="timeline-wrap" aria-label="共享时间轴">
-      <div class="timeline-meta"><span>起点</span><span>共享时间轴 · 24 格</span><span>终点</span></div>
-      <div class="timeline" id="timeline"></div>
-    </section>
-
-    <section class="players" id="players"></section>
-
-    <footer class="footer-actions">
-      <div class="status" id="status"></div>
-      <button class="next" id="next-round">结束本回合</button>
-      <div class="rule">落后者行动 · 重合时先手行动</div>
-    </footer>
   </main>
   <div class="toast" id="toast"></div>
 
   <script>
-    const jobs = {
-      shield: { name: '刀盾手', ap: 8, mp: 2 },
-      warrior: { name: '重甲战士', ap: 6, mp: 3 },
-      assassin: { name: '双刀刺客', ap: 8, mp: 1 },
-      rogue: { name: '盗贼', ap: 12, mp: 0 }
-    };
-    const fresh = () => ({ round: 1, first: 1, players: [
-      { job: 'warrior', ap: 6, position: 0 },
-      { job: 'assassin', ap: 8, position: 0 }
+    const fresh = () => ({ round:1, first:1, players:[
+      { maxAp:6, ap:6, position:0 }, { maxAp:8, ap:8, position:0 }
     ]});
-    let state = load() || fresh();
+    let state = migrate(load()) || fresh();
     let history = [];
+    let maxInputTimer;
 
-    function load() { try { return JSON.parse(localStorage.getItem('ap-referee-v1')); } catch { return null; } }
-    function save() { localStorage.setItem('ap-referee-v1', JSON.stringify(state)); }
+    function load() { try { return JSON.parse(localStorage.getItem('ap-referee-v2')); } catch { return null; } }
+    function migrate(value) {
+      if (!value || !Array.isArray(value.players)) return null;
+      value.players = value.players.map(p => {
+        const maxAp = Math.max(1, Math.min(24, Number(p.maxAp || p.ap || 1)));
+        return { maxAp, ap:Math.min(maxAp, Number(p.ap) || maxAp), position:Math.max(0, Math.min(24, Number(p.position) || 0)) };
+      });
+      return value;
+    }
+    function save() { localStorage.setItem('ap-referee-v2', JSON.stringify(state)); }
     function snapshot() { history.push(JSON.stringify(state)); if (history.length > 30) history.shift(); }
-    function stepFor(p) { return 24 / jobs[p.job].ap; }
+    function stepFor(p) { return 24 / p.maxAp; }
     function actingPlayer() {
       const [a,b] = state.players;
-      if (a.position === b.position) return state.first;
+      if (Math.abs(a.position-b.position) < .0001) return state.first;
       return a.position < b.position ? 1 : 2;
     }
-    function inferFirst() {
-      const [a,b] = state.players.map(p => jobs[p.job]);
-      if (a.ap !== b.ap) return a.ap > b.ap ? 1 : 2;
-      if (a.mp !== b.mp) return a.mp > b.mp ? 1 : 2;
-      return state.first;
-    }
     function spend(index, amount) {
-      const p = state.players[index];
-      if (p.ap < amount) return;
-      snapshot();
-      p.ap -= amount;
-      p.position = Math.min(24, p.position + amount * stepFor(p));
-      commit();
+      const p=state.players[index]; if (p.ap<amount) return;
+      snapshot(); p.ap-=amount; p.position=Math.min(24,p.position+amount*stepFor(p)); commit();
     }
     function adjust(index, delta) {
-      const p = state.players[index], max = jobs[p.job].ap;
-      if (p.ap + delta < 0 || p.ap + delta > max) return;
-      snapshot();
-      p.ap += delta;
-      p.position = Math.max(0, Math.min(24, p.position - delta * stepFor(p)));
-      commit();
+      const p=state.players[index]; if (p.ap+delta<0 || p.ap+delta>p.maxAp) return;
+      snapshot(); p.ap+=delta; p.position=Math.max(0,Math.min(24,p.position-delta*stepFor(p))); commit();
     }
-    function changeJob(index, value) {
-      snapshot();
-      const p = state.players[index];
-      p.job = value; p.ap = jobs[value].ap; p.position = 0;
-      state.first = inferFirst();
-      commit();
+    function setMax(index, raw) {
+      clearTimeout(maxInputTimer);
+      const value=Math.max(1,Math.min(24,Math.round(Number(raw)||1)));
+      snapshot(); const p=state.players[index]; p.maxAp=value; p.ap=value; p.position=0; commit();
     }
+    function scheduleMax(index, raw) {
+      clearTimeout(maxInputTimer); maxInputTimer=setTimeout(()=>setMax(index,raw),350);
+    }
+    function setFirst(index) { snapshot(); state.first=index+1; commit(); }
     function nextRound() {
-      if (state.round >= 5) { showToast('已是最后一回合'); return; }
-      snapshot(); state.round += 1;
-      state.players.forEach(p => { p.ap = jobs[p.job].ap; p.position = 0; });
-      commit();
+      if (state.round>=5) { showToast('已是最后一回合'); return; }
+      snapshot(); state.round+=1; state.players.forEach(p=>{p.ap=p.maxAp;p.position=0}); commit();
     }
-    function setFirst(index) { snapshot(); state.first = index + 1; commit(); }
     function commit() { save(); render(); }
     function showToast(message) {
-      const el = document.querySelector('#toast'); el.textContent = message; el.classList.add('show');
-      clearTimeout(showToast.timer); showToast.timer = setTimeout(() => el.classList.remove('show'), 1400);
+      const el=document.querySelector('#toast'); el.textContent=message; el.classList.add('show');
+      clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>el.classList.remove('show'),1400);
     }
     function renderTimeline() {
-      const root = document.querySelector('#timeline'); root.innerHTML = '';
-      for (let i=1; i<=24; i++) { const cell=document.createElement('div'); cell.className='cell'+(i%4===0?' major':''); root.append(cell); }
-      const same = state.players[0].position === state.players[1].position;
-      state.players.forEach((p,i) => {
-        const edge=p.position===0?' start':p.position===24?' end':'';
-        const m=document.createElement('div'); m.className=`marker p${i+1}${same?' same':''}${edge}`; m.textContent=i+1;
-        m.style.left=`${(p.position/24)*100}%`; root.append(m);
+      const root=document.querySelector('#timeline'); root.innerHTML='';
+      state.players.forEach((p,i)=>{
+        const track=document.createElement('div'); track.className=`track p${i+1}`;
+        const grid=document.createElement('div'); grid.className='track-grid'; grid.style.setProperty('--segments',p.maxAp);
+        const used=Math.round((p.position/24)*p.maxAp); const markerIndex=Math.max(0,Math.min(p.maxAp-1,used-1));
+        for (let n=0;n<p.maxAp;n++) {
+          const cell=document.createElement('i'); cell.className=`cell${n===markerIndex?' marker-cell':''}`;
+          if (n===markerIndex) cell.textContent=`P${i+1}`; grid.append(cell);
+        }
+        track.append(grid); root.append(track);
       });
+      document.querySelector('#timeline-title').textContent=`P1 · ${state.players[0].maxAp} 格 / P2 · ${state.players[1].maxAp} 格`;
     }
-    function playerHTML(p,i) {
-      const job=jobs[p.job], color=i===0?'var(--p1)':'var(--p2)';
-      const options=Object.entries(jobs).map(([key,j])=>`<option value="${key}" ${key===p.job?'selected':''}>${j.name}</option>`).join('');
-      const pips=Array.from({length:job.ap},(_,n)=>`<i class="ap-pip ${n<p.ap?'used':''}"></i>`).join('');
-      return `<article class="player" style="--color:${color}">
-        <div class="player-head"><span class="player-id">${i+1}</span><div class="player-title"><strong>玩家${i===0?'一':'二'}</strong><span>每点推进 ${stepFor(p)} 格</span></div><select data-job="${i}" aria-label="玩家${i+1}职业">${options}</select></div>
-        <div class="ap-display"><div><div class="ap-label">剩余行动点</div><strong class="ap-number">${p.ap}</strong></div><span class="ap-max">/ ${job.ap}</span></div>
-        <div class="ap-track">${pips}</div>
-        <div class="spend">${[1,2,3].map(n=>`<button data-spend="${i},${n}" ${p.ap<n?'disabled':''}>− ${n}</button>`).join('')}</div>
-        <div class="player-foot"><button class="first-btn ${state.first===i+1?'on':''}" data-first="${i}">${state.first===i+1?'◆ 当前先手':'设为先手'}</button><div class="adjust"><button data-adjust="${i},-1" aria-label="扣除一点">−</button><button data-adjust="${i},1" aria-label="恢复一点">＋</button></div></div>
+    function playerHTML(p,i,actor) {
+      const pips=Array.from({length:p.maxAp},(_,n)=>`<i class="ap-pip ${n<p.ap?'used':''}"></i>`).join('');
+      return `<article class="player p${i+1} ${actor===i+1?'active-turn':''}">
+        <div class="player-head"><span class="player-id">P${i+1}</span><div class="player-name"><strong>玩家${i===0?'一':'二'}</strong><span>每点推进 ${Number(stepFor(p).toFixed(2))} 格</span></div>
+          <div class="ap-setting"><label for="ap-${i}">行动点上限</label><input class="ap-input" id="ap-${i}" data-max="${i}" type="number" inputmode="numeric" min="1" max="24" value="${p.maxAp}"><button class="first-btn ${state.first===i+1?'on':''}" data-first="${i}">${state.first===i+1?'◆ 当前先手':'设为先手'}</button></div>
+        </div>
+        <div><div class="ap-display"><div><div class="ap-label">剩余行动点</div><strong class="ap-number">${p.ap}</strong></div><span class="ap-max">/ ${p.maxAp}</span></div><div class="ap-track">${pips}</div></div>
+        <div class="controls">${[1,2,3].map(n=>`<button class="spend" data-spend="${i},${n}" ${p.ap<n?'disabled':''}>− ${n}</button>`).join('')}<div class="adjust"><button data-adjust="${i},-1" aria-label="扣除一点">−</button><button data-adjust="${i},1" aria-label="恢复一点">＋</button></div></div>
       </article>`;
     }
     function bind() {
       document.querySelectorAll('[data-spend]').forEach(el=>el.onclick=()=>{const [i,n]=el.dataset.spend.split(',').map(Number);spend(i,n)});
       document.querySelectorAll('[data-adjust]').forEach(el=>el.onclick=()=>{const [i,n]=el.dataset.adjust.split(',').map(Number);adjust(i,n)});
       document.querySelectorAll('[data-first]').forEach(el=>el.onclick=()=>setFirst(Number(el.dataset.first)));
-      document.querySelectorAll('[data-job]').forEach(el=>el.onchange=()=>changeJob(Number(el.dataset.job),el.value));
+      document.querySelectorAll('[data-max]').forEach(el=>{
+        el.oninput=()=>scheduleMax(Number(el.dataset.max),el.value);
+        el.onchange=()=>setMax(Number(el.dataset.max),el.value);
+      });
     }
     function render() {
-      document.querySelector('#round').textContent=String(state.round).padStart(2,'0');
-      const actor=actingPlayer();
-      document.querySelector('#turn-p1').classList.toggle('active',actor===1);
-      document.querySelector('#turn-p2').classList.toggle('active',actor===2);
-      document.querySelector('#status').textContent=`玩家${actor===1?'一':'二'}行动 · 先手为玩家${state.first===1?'一':'二'}`;
-      document.querySelector('#players').innerHTML=state.players.map(playerHTML).join('');
-      document.querySelector('#undo').disabled=!history.length;
-      document.querySelector('#next-round').textContent=state.round===5?'结束对局':'结束本回合';
+      const actor=actingPlayer(); document.querySelector('#round').textContent=String(state.round).padStart(2,'0');
+      document.querySelector('#turn-p1').classList.toggle('active',actor===1); document.querySelector('#turn-p2').classList.toggle('active',actor===2);
+      document.querySelector('#status').textContent=`P${actor} 行动 · P${state.first} 先手`;
+      document.querySelector('#player-1').innerHTML=playerHTML(state.players[0],0,actor); document.querySelector('#player-2').innerHTML=playerHTML(state.players[1],1,actor);
+      document.querySelector('#undo').disabled=!history.length; document.querySelector('#next-round').textContent=state.round===5?'结束对局':'结束本回合';
       renderTimeline(); bind();
     }
     document.querySelector('#undo').onclick=()=>{if(!history.length)return;state=JSON.parse(history.pop());commit()};
